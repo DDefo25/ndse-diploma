@@ -32,14 +32,35 @@ const AdvertisementSchema = new Schema ({
     },
 }, {
     statics: {
-        async find(params) {
-            const {} = params
-            return await this.findByIdAndUpdate(id, { isDeleted: true });
+        async findByParams(params) {
+            const queryFilter = {}
+            for (const param in params) {
+                switch (param) {
+                    case 'userId':
+                        queryFilter.userId = params[param];
+                        break;
+                    case 'shortText':
+                        queryFilter.shortText = { $regex: params[param], $options: 'mi'};
+                        break;
+                    case 'description':
+                        queryFilter.description = { $regex: params[param], $options: 'mi'};
+                        break;
+                    case 'tags':
+                        queryFilter.tags = { $all: params[param] };
+                        break;
+                }
+            }
+            return await this.find({
+                ...queryFilter,
+                isDeleted: false
+            }).select('-__v')
         },
-        async remove(id) {
-            return await this.findByIdAndUpdate(id, { isDeleted: true });
-        }
+        async removeById(id) {
+            return await this.findByIdAndUpdate(id, { isDeleted: true }).select('-__v');
+        },
     }
 })
 
-module.export = model('Advertisement', AdvertisementSchema);
+module.exports = model('Advertisement', AdvertisementSchema);
+
+
