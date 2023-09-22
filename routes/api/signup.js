@@ -4,18 +4,17 @@ const User = require('../../modules/User')
 
 const router = express.Router()
 
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
     console.log(req)
     res.json('hello')
 }).post('/', async (req, res, next) => {
     const {email, password, name, contactPhone=''} = req.body;
-    const salt = crypto.randomBytes(16);
-    crypto.pbkdf2(password, salt, 310000, 32, 'sha256', async (err, derivedKey) => {
-      if (err) { return next(err); }
+    await User.hashPassword(password, async (err, hash) => {
       try {
+        if (err) next(err);
         const user = await User.create({
             email,
-            passwordHash: derivedKey.toString('hex'),
+            passwordHash: hash,
             name,
             contactPhone
         })
@@ -29,13 +28,12 @@ router.get('/', (req, res, next) => {
             status: "ok"
         })
       } catch (e) {
-        res.status(500).json({
-            error: e.message,
+          res.status(500).json({
+            error: err.message,
             status: "error"
-        })
+        })          
       }
-
-    });
-})
+    })
+});
 
 module.exports = router;
