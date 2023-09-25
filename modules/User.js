@@ -47,10 +47,14 @@ const UserSchema = new Schema ({
 
             crypto.pbkdf2(password, salt, iterations, hashBytes, 'sha256', (err, verify) => {
               if (err) {
-                return cb(err, false);
+                return cb(err, false, { message: 'Неверный логин или пароль' });
+              }
+
+              if (verify.toString('hex') !== hash) {
+                return cb(null, false, { message: 'Неверный логин или пароль' })
               }
               
-              cb(null, verify.toString('hex') === hash);
+              cb(null, this);
             });
           }
     }
