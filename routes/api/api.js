@@ -19,10 +19,10 @@ passport.use(new LocalStrategy(
   async function verify(username, password, cb) {
     try {
       const user = await User.findByEmail(username);
-      console.log(user)
-      if (!user) return cb(null, false)
-      user.verifyPassword(password, (err, verify) => {
-        return cb(err, verify)
+      if (!user) return cb(null, false, { message: 'Неверный логин или пароль' })
+      
+      user.verifyPassword(password, (err, user) => {
+        return cb(err, user)
       })
     } catch (e) {
       return cb(e);
