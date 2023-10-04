@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('../../modules/User');
+const errorJSON = require('../../middleware/errorJSON');
 
 const router = express.Router();
 
@@ -30,10 +31,7 @@ router.post('/', async (req, res, next) => {
         status: 'ok',
       });
     } catch (e) {
-      res.status(500).json({
-        error: e.message,
-        status: 'error',
-      });
+      return errorJSON({ code: 500, message: e.message }, res);
     }
   });
 });

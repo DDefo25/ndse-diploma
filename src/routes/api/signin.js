@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('passport');
+const errorJSON = require('../../middleware/errorJSON');
 
 const router = express.Router();
 
@@ -11,10 +12,7 @@ router.post('/', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) { return next(err); }
     if (!user) {
-      return res.json({
-        error: info.message,
-        status: 'error',
-      });
+      return errorJSON({ code: 500, message: info }, res);      
     }
     req.logIn(user, (e) => {
       if (e) { return next(e); }
