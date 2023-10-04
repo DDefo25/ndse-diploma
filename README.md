@@ -189,10 +189,10 @@ const message = await Chat.sendMessage(data);
 #### 1.3.3. Подписаться на новые сообщения в чате
 
 ```js
-Chat.subscribe((data) => {});
+Chat.subscribe(id, (data) => {});
 ```
 
-Функция `Chat.subscribe` принимает функцию обратного вызова и id пользователя
+Функция `Chat.subscribe` принимает функцию обратного вызова и `id` пользователя
 
 Для пользователя создается новый EventEmitter и добавляется в handler объект changeStreams.
 
@@ -490,5 +490,6 @@ const messages = await Chat.getHistory(id);
 Запуск происходит через компиляцию `docker-compose.yaml`
 
 Переменные окружения для запуска приложения `delivery-service`
-    `HTTP_PORT` - порт приложения
-    `MONGO_URL` - адрес MongoDB
+
+`HTTP_PORT` - порт приложения
+`MONGO_URL` - адрес MongoDB
