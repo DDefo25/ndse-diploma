@@ -1,0 +1,37 @@
+services:  
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: <username>
+      MONGO_INITDB_ROOT_PASSWORD: <password>
+    ports:
+      - 27017:27017
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    volumes:
+      - ./data/db:/data/db
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: <username>
+      ME_CONFIG_MONGODB_ADMINPASSWORD: <password>
+      ME_CONFIG_MONGODB_URL: mongodb://<username>:<password>@<mongodb_URL>:<mongodb_URL>/
+  
+  delivery-service:
+    build: .
+    container_name: delivery-service
+    volumes:
+      - ./uploads:/app/uploads
+    ports: 
+      - 8989:8989
+    environment: 
+      - HTTP_PORT=8989
+      - MONGO_URL=mongodb://<username>:<password>@<mongodb_URL>:<mongodb_URL>/
+    depends_on:
+      - mongo
+      
